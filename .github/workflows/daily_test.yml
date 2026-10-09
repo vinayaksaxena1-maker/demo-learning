@@ -1,0 +1,32 @@
+name: Daily Automated Test Runner (Cloud)
+
+on:
+  # रोज़ाना सुबह 9:00 AM IST (UTC 3:30 AM) पर क्लाउड पर अपने-आप चलेगा
+  schedule:
+    - cron: '30 3 * * *'
+
+  # जब आप GitHub वेबसाइट से 'Run workflow' बटन दबाकर मैन्युअली टेस्ट करना चाहें
+  workflow_dispatch:
+
+  # जब भी नया कोड पुश करें या PR बनाएँ
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Repository कोड डाउनलोड करें
+        uses: actions/checkout@v4
+
+      - name: 🐍 Python सेट अप करें
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 🧪 सभी Tests रन करें
+        run: |
+          python -m unittest discover -s . -p "test_*.py" -v
